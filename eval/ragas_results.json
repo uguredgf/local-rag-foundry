@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "question": "What is artificial intelligence?",
+      "answer": "The provided text does not contain information about what Artificial Intelligence (\"AI\") specifically entails; it focuses solely upon aspects related directly or indirectly connected primarily around ",
+      "faithfulness": 0.037,
+      "answer_relevancy": 0.5,
+      "context_precision": 0.25
+    },
+    {
+      "question": "What are the main applications of AI?",
+      "answer": "As an Assistant I couldn't find any information about \"the Main Applications Of Artificial Intelligence\" in your provided text because there was no mention or discussion related specifically with this",
+      "faithfulness": 0.029,
+      "answer_relevancy": 0.667,
+      "context_precision": 0.429
+    },
+    {
+      "question": "What is machine learning?",
+      "answer": "Machine Learning can refer either:\n\n1.) A subset within artificial intelligence where computers learn from data and improve over time without being explicitly programmed; it involves algorithms making",
+      "faithfulness": 0.06,
+      "answer_relevancy": 0.5,
+      "context_precision": 0.25
+    },
+    {
+      "question": "How does deep learning work?",
+      "answer": "Deep Learning works by using artificial neural networks with many layers—hence \"deep\"—to learn from vast amounts and varieties data sets without being explicitly programmed how it should perform tasks",
+      "faithfulness": 0.05,
+      "answer_relevancy": 0.667,
+      "context_precision": 0.067
+    },
+    {
+      "question": "What are the challenges of AI?",
+      "answer": "Based solely upon your provided text which focuses primarily around traditional Software Development methodologies like Waterfall Model versus Agile practices such as prototyping models or democratic ",
+      "faithfulness": 0.045,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.389
+    }
+  ],
+  "averages": {
+    "faithfulness": 0.044,
+    "answer_relevancy": 0.467,
+    "context_precision": 0.277
+  }
+}
