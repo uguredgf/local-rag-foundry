@@ -1,18 +1,26 @@
 # 🤖 Local RAG with Foundry Local
 
-Tamamen lokalde çalışan RAG (Retrieval-Augmented Generation) uygulaması.
+Tamamen lokalde çalışan gelişmiş RAG (Retrieval-Augmented Generation) uygulaması.
 İnternet bağlantısı gerekmez, API ücreti yoktur, verileriniz cihazınızdan çıkmaz.
 
 ## 🎯 Proje Hakkında
 
 Bu proje, Microsoft Foundry Local kullanarak PDF dokümanlarını sorgulayan
 bir yapay zeka uygulaması geliştirmeyi amaçlamaktadır. Kullanıcılar PDF
-yükleyip, belgeden kaynaklanan sorular sorabilir.
+yükleyip belgeden kaynaklanan sorular sorabilir. Sistem tamamen lokalde
+çalıştığından kurumsal ve akademik kullanım için idealdir.
 
 ## 🏗️ Mimari
+PDF → Chunking → ChromaDB → Query Expansion → Hybrid Search → Re-ranker → Phi-4-mini → Cevap
 
-PDF → Chunking → ChromaDB → Retrieval → Phi-4-mini → Cevap
-(Vektör DB)              (Foundry Local)
+## 🔄 Pipeline Detayı
+
+1. **Chunking** — PDF sentence-based veya fixed-size parçalara bölünür
+2. **Embedding** — ChromaDB all-MiniLM-L6-v2 ile vektöre çevrilir
+3. **Query Expansion** — Soru LLM tarafından 3 farklı şekilde genişletilir
+4. **Hybrid Search** — Vektör araması + BM25 keyword araması birleştirilir
+5. **Re-ranking** — CrossEncoder ile parçalar yeniden sıralanır
+6. **Generation** — Phi-4-mini bağlam kullanarak Türkçe cevap üretir
 
 ## 🛠️ Teknolojiler
 
@@ -21,8 +29,10 @@ PDF → Chunking → ChromaDB → Retrieval → Phi-4-mini → Cevap
 | LLM | Microsoft Phi-4-mini (Foundry Local) |
 | Vektör Veritabanı | ChromaDB |
 | Embedding | all-MiniLM-L6-v2 |
+| Keyword Arama | BM25 (rank-bm25) |
+| Re-ranking | CrossEncoder (ms-marco-MiniLM-L-6-v2) |
 | Arayüz | Streamlit |
-| Değerlendirme | Özel metrikler (Faithfulness, Relevancy, Precision) |
+| SDK | Foundry Local SDK |
 
 ## 🚀 Kurulum
 
@@ -34,7 +44,7 @@ foundry model load Phi-4-mini-instruct-cuda-gpu:5
 
 ### 2. Repoyu Klonla
 ```powershell
-git clone https://github.com/KULLANICI_ADIN/local-rag-foundry.git
+git clone https://github.com/uguredgf/local-rag-foundry.git
 cd local-rag-foundry
 ```
 
@@ -52,15 +62,18 @@ streamlit run src/app.py
 ## 📁 Proje Yapısı
 /
 ├── src/
-│   ├── app.py          # Streamlit arayüzü
-│   ├── chunker.py      # Chunking stratejileri
-│   ├── rag.py          # Terminal tabanlı RAG
-│   └── ingest.py       # PDF işleme
-├── data/
-│   └── sample_docs/    # Örnek dokümanlar
+│ ├── app.py # Streamlit arayüzü
+│ ├── chunker.py # Chunking stratejileri
+│ ├── hybrid_search.py # Hybrid Search (vektör + BM25)
+│ ├── reranker.py # CrossEncoder re-ranking
+│ ├── query_expander.py # Query expansion
+│ ├── rag.py # Terminal tabanlı RAG
+│ └── ingest.py # PDF işleme
 ├── eval/
-│   ├── evaluate.py     # Değerlendirme scripti
-│   └── ragas_results.json  # Sonuçlar
+│ ├── evaluate.py # Değerlendirme scripti
+│ └── ragas_results.json # Sonuçlar
+├── data/
+│ └── sample_docs/ # Örnek dokümanlar
 ├── requirements.txt
 └── README.md
 
@@ -79,9 +92,11 @@ streamlit run src/app.py
 ## 🔍 Temel Bulgular
 
 - **Sentence-based chunking**, fixed-size'a göre daha kaliteli cevaplar üretir
-- Fixed-size chunking cümle ortasında keserek LLM'in halüsinasyon üretmesine yol açar
-- Çoklu PDF desteği ile farklı belgelerden bilgi birleştirilebilir
-- Port otomatik algılama sayesinde her oturumda manuel ayar gerekmez
+- Fixed-size chunking cümle ortasında keserek LLM halüsinasyon üretmesine yol açar
+- **Hybrid Search**, sadece vektör aramasına göre spesifik teknik terimleri daha iyi bulur
+- **Re-ranking** ile retrieval kalitesi artmaktadır
+- **Query Expansion** ile tek sorgu yerine çoklu sorgu daha kapsamlı sonuç verir
+- Türkçe sorular otomatik İngilizce'ye çevrilerek İngilizce belgelerde arama yapılabilir
 
 ## 🎥 Demo Video
 

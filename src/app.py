@@ -9,6 +9,7 @@ import re
 from chunker import fixed_chunker, sentence_chunker, deduplicate_chunks
 from hybrid_search import HybridSearch
 from reranker import Reranker
+from query_expander import expand_query
 
 st.set_page_config(page_title="Local RAG - Foundry", page_icon="🤖", layout="wide")
 st.title("🤖 Local RAG with Foundry Local")
@@ -188,10 +189,28 @@ else:
                 )
                 soru_en = translation.choices[0].message.content.strip()
 
-                results = st.session_state.collection.query(
-                    query_texts=[soru_en], n_results=5
-                )
-                vector_results = results['documents'][0]
+                # Query expansion
+                expanded_queries = expand_query(
+                    client=client,
+                    model="Phi-4-mini-instruct-cuda-gpu:5",
+                    query=soru_en
+                    )
+
+                # Tüm genişletilmiş sorgularla ara, sonuçları birleştir
+                all_results = []
+                for q in expanded_queries:
+                    r = st.session_state.collection.query(
+                        query_texts=[q], n_results=3
+                    )
+                    all_results.extend(r['documents'][0])
+
+                # Tekrarları temizle
+                seen = set()
+                vector_results = []
+                for chunk in all_results:
+                    if chunk not in seen:
+                        seen.add(chunk)
+                        vector_results.append(chunk)
 
                 # Hybrid search
                 hybrid_results = st.session_state.hybrid_searcher.hybrid_search(
